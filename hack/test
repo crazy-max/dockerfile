@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+. $(dirname $0)/_util
+set -eu -o pipefail
+
+: ${CHANNEL=mainline}
+
+: ${TEST_INTEGRATION=}
+: ${TEST_DOCKERFILE=}
+: ${TEST_DOCKERD=}
+: ${TEST_DOCKERD_BINARY=$(which dockerd)}
+: ${TEST_COVERAGE=}
+: ${TEST_KEEP_CACHE=}
+
+if [ "$TEST_DOCKERD" == "1" ] && ! file $TEST_DOCKERD_BINARY | grep "statically linked" >/dev/null; then
+  echo "dockerd binary needs to be statically linked"
+  exit 1
+fi
+
+if [ "$#" == 0 ]; then TEST_INTEGRATION=1; fi
+
+while test $# -gt 0; do
+  case "$1" in
+    dockerfile)
+      TEST_DOCKERFILE=1
+      ;;
+    integration)
+      TEST_INTEGRATION=1
+      ;;
+    *)
+      echo "unknown arg $1"
+      ;;
+  esac
+  shift
+done
+
+coverageVol=""
+coverageFlags=""
+if [ "$TEST_COVERAGE" = "1" ]; then
+  covdir="$(pwd)/coverage"
+  mkdir -p "$covdir"
+  coverageVol="-v $covdir:/coverage"
+  coverageFlags="-coverprofile=/coverage/coverage.txt -covermode=atomic"
+fi
+
+iid="dfile-frontend-tests"
+
+# build buildkit integration test base container and output to docker
+$(dirname $0)/buildkit-it-base "type=docker,name=$iid"
+
+cacheVolume="dfile-frontend-test-cache"
+if ! docker container inspect "$cacheVolume" >/dev/null 2>/dev/null; then
+  dockerCmd create -v /root/.cache -v /root/.cache/registry -v /go/pkg/mod --name "$cacheVolume" alpine
+fi
+
+createFlags="--rm --privileged --volumes-from=$cacheVolume -v /tmp $coverageVol -e BUILDKIT_RUN_NETWORK_INTEGRATION_TESTS=1 -e BUILDKIT_CNI_INIT_LOCK_PATH=/run/buildkit_cni_bridge.lock -e TEST_DOCKERD -e SKIP_INTEGRATION_TESTS ${BUILDKIT_INTEGRATION_SNAPSHOTTER:+"-eBUILDKIT_INTEGRATION_SNAPSHOTTER"} -e BUILDKIT_REGISTRY_MIRROR_DIR=/root/.cache/registry"
+
+if [ "$TEST_INTEGRATION" == 1 ]; then
+  cid=$(dockerCmd create $createFlags $iid go test $coverageFlags ${TEST_FLAGS:--v} ${TEST_PKGS:-.})
+  dockerCmd cp . "$cid:/src"
+  if [ "$TEST_DOCKERD" = "1" ]; then
+    dockerCmd cp "$TEST_DOCKERD_BINARY" $cid:/usr/bin/
+  fi
+  dockerCmd start -a $cid
+fi
+
+if [ "$TEST_DOCKERFILE" == 1 ]; then
+  buildtags=$(cat ./release/$CHANNEL/tags)
+  tarout=$(mktemp -t dockerfile-frontend.XXXXXXXXXX)
+
+  # build dockerfile frontend
+  dockerCmd buildx build --build-arg "CHANNEL=$CHANNEL" --output "type=oci,dest=$tarout" .
+
+  if [ -s "$tarout" ]; then
+    cid=$(dockerCmd create $createFlags -v /tmp $coverageVol -e FRONTEND_GATEWAY_ONLY=local:/$CHANNEL.tar -e EXTERNAL_DF_FRONTEND=/dockerfile-frontend $iid go test $coverageFlags --count=1 -tags "$buildtags" ${TEST_FLAGS:-v} ${TEST_PKGS:-.})
+    dockerCmd cp . "$cid:/src"
+    dockerCmd cp "$tarout" "$cid:/$CHANNEL.tar"
+    if [ "$TEST_DOCKERD" = "1" ]; then
+      dockerCmd cp "$TEST_DOCKERD_BINARY" "$cid:/usr/bin/"
+    fi
+    dockerCmd start -a "$cid"
+  fi
+  rm "$tarout"
+fi
+
+if [ "$TEST_KEEP_CACHE" != "1" ]; then
+  dockerCmd rm -v $cacheVolume
+fi
