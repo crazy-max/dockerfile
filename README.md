@@ -1,6 +1,39 @@
-# Dockerfile frontend syntaxes
+# BuildKit Dockerfile frontend
 
-This page documents new BuildKit-only commands added to the Dockerfile frontend.
+<!-- FIXME: Remove comment when moved to docker org
+[![GitHub release](https://img.shields.io/github/release/docker/dockerfile.svg?style=flat-square)](https://github.com/docker/dockerfile/releases/latest)
+[![Build Status](https://github.com/docker/dockerfile/workflows/build/badge.svg)](https://github.com/docker/dockerfile/actions?query=workflow%3Abuild)
+[![Docker Stars](https://img.shields.io/docker/stars/docker/dockerfile.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/docker/dockerfile/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/docker/dockerfile.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/docker/dockerfile/)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/docker/dockerfile?style=flat-square)](https://goreportcard.com/report/github.com/docker/dockerfile)
+[![codecov](https://img.shields.io/codecov/c/github/docker/dockerfile?logo=codecov&style=flat-square)](https://codecov.io/gh/docker/dockerfile)
+-->
+
+Official Dockerfile frontend that enables building Dockerfiles with [BuildKit](https://github.com/moby/buildkit).
+
+___
+
+- [Note for Docker users](#note-for-docker-users)
+- [Using external Dockerfile frontend](#using-external-dockerfile-frontend)
+- [Syntax](#syntax)
+  - [Build Mounts `RUN --mount=...`](#build-mounts-run---mount)
+    - [`RUN --mount=type=bind` (the default mount type)](#run---mounttypebind-the-default-mount-type)
+    - [`RUN --mount=type=cache`](#run---mounttypecache)
+      - [Example: cache Go packages](#example-cache-go-packages)
+      - [Example: cache apt packages](#example-cache-apt-packages)
+    - [`RUN --mount=type=tmpfs`](#run---mounttypetmpfs)
+    - [`RUN --mount=type=secret`](#run---mounttypesecret)
+      - [Example: access to S3](#example-access-to-s3)
+    - [`RUN --mount=type=ssh`](#run---mounttypessh)
+      - [Example: access to Gitlab](#example-access-to-gitlab)
+    - [`RUN --network=none|host|default` (network modes)](#run---networknonehostdefault-network-modes)
+      - [Example: isolating external effects](#example-isolating-external-effects)
+    - [`RUN --security=insecure|sandbox` (security context)](#run---securityinsecuresandbox-security-context)
+      - [Example: check entitlements](#example-check-entitlements)
+  - [Here-Documents](#here-documents)
+  - [Built-in build args](#built-in-build-args)
+- [Contributing](#contributing)
 
 ## Note for Docker users
 
@@ -24,12 +57,13 @@ The images are published on two channels: *latest* and *labs*. The latest channe
 incrementing the major component of a version and you may want to pin the image to a specific revision. Even when syntaxes
 change in between releases on labs channel, the old versions are guaranteed to be backward compatible.
 
+## Syntax
 
-## Build Mounts `RUN --mount=...`
+### Build Mounts `RUN --mount=...`
 
 To use this flag set Dockerfile version to at least `1.2`
 
-```
+```dockerfile
 # syntax=docker/dockerfile:1.3
 ```
 
@@ -37,7 +71,7 @@ To use this flag set Dockerfile version to at least `1.2`
 files from other part of the build without copying, accessing build secrets or ssh-agent sockets, or creating cache
 locations to speed up your build.
 
-### `RUN --mount=type=bind` (the default mount type)
+#### `RUN --mount=type=bind` (the default mount type)
 
 This mount type allows binding directories (read-only) in the context or in an image to the build container.
 
@@ -48,7 +82,7 @@ This mount type allows binding directories (read-only) in the context or in an i
 |`from`               | Build stage or image name for the root of the source. Defaults to the build context.|
 |`rw`,`readwrite`     | Allow writes on the mount. Written data will be discarded.|
 
-### `RUN --mount=type=cache`
+#### `RUN --mount=type=cache`
 
 This mount type allows the build container to cache directories for compilers and package managers.
 
@@ -69,8 +103,7 @@ instruction cache. Cache mounts should only be used for better performance. Your
 with any contents of the cache directory as another build may overwrite the files or GC may clean
 it if more storage space is needed.
 
-
-#### Example: cache Go packages
+##### Example: cache Go packages
 
 ```dockerfile
 # syntax = docker/dockerfile:1.3
@@ -79,7 +112,7 @@ FROM golang
 RUN --mount=type=cache,target=/root/.cache/go-build go build ...
 ```
 
-#### Example: cache apt packages
+##### Example: cache apt packages
 
 ```dockerfile
 # syntax = docker/dockerfile:1.3
@@ -89,7 +122,7 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
   apt update && apt-get --no-install-recommends install -y gcc
 ```
 
-### `RUN --mount=type=tmpfs`
+#### `RUN --mount=type=tmpfs`
 
 This mount type allows mounting tmpfs in the build container.
 
@@ -98,8 +131,7 @@ This mount type allows mounting tmpfs in the build container.
 |`target` (required)  | Mount path.|
 |`size`               | Specify an upper limit on the size of the filesystem.|
 
-
-### `RUN --mount=type=secret`
+#### `RUN --mount=type=secret`
 
 This mount type allows the build container to access secure files such as private keys without baking them into the image.
 
@@ -112,8 +144,7 @@ This mount type allows the build container to access secure files such as privat
 |`uid`                | User ID for secret file. Default 0.|
 |`gid`                | Group ID for secret file. Default 0.|
 
-
-#### Example: access to S3
+##### Example: access to S3
 
 ```dockerfile
 # syntax = docker/dockerfile:1.3
@@ -131,7 +162,7 @@ $ buildctl build --frontend=dockerfile.v0 --local context=. --local dockerfile=.
   --secret id=aws,src=$HOME/.aws/credentials
 ```
 
-### `RUN --mount=type=ssh`
+#### `RUN --mount=type=ssh`
 
 This mount type allows the build container to access SSH keys via SSH agents, with support for passphrases.
 
@@ -144,8 +175,7 @@ This mount type allows the build container to access SSH keys via SSH agents, wi
 |`uid`                | User ID for socket. Default 0.|
 |`gid`                | Group ID for socket. Default 0.|
 
-
-#### Example: access to Gitlab
+##### Example: access to Gitlab
 
 ```dockerfile
 # syntax = docker/dockerfile:1.3
@@ -172,8 +202,7 @@ $ buildctl build --frontend=dockerfile.v0 --local context=. --local dockerfile=.
 You can also specify a path to `*.pem` file on the host directly instead of `$SSH_AUTH_SOCK`.
 However, pem files with passphrases are not supported.
 
-
-## Network modes `RUN --network=none|host|default`
+#### `RUN --network=none|host|default` (network modes)
 
 ```
 # syntax=docker/dockerfile:1.3
@@ -195,7 +224,7 @@ which needs to be enabled when starting the buildkitd daemon
 (`--allow-insecure-entitlement network.host`) and on the build request
 (`--allow network.host`).
 
-#### Example: isolating external effects
+##### Example: isolating external effects
 
 ```dockerfile
 # syntax = docker/dockerfile:1.3
@@ -207,8 +236,7 @@ RUN --network=none pip install --find-links wheels mypackage
 `pip` will only be able to install the packages provided in the tarfile, which
 can be controlled by an earlier build stage.
 
-
-## Security context `RUN --security=insecure|sandbox`
+#### `RUN --security=insecure|sandbox` (security context)
 
 To use this flag, set Dockerfile version to `labs` channel.
 
@@ -225,7 +253,7 @@ to running `docker run --privileged`. In order to access this feature, entitleme
 
 Default sandbox mode can be activated via `--security=sandbox`, but that is no-op.
 
-#### Example: check entitlements
+##### Example: check entitlements
 
 ```dockerfile
 # syntax = docker/dockerfile:1.3-labs
@@ -237,7 +265,7 @@ RUN --security=insecure cat /proc/self/status | grep CapEff
 #84 0.093 CapEff:	0000003fffffffff
 ```
 
-## Here-Documents
+### Here-Documents
 
 To use this flag, set Dockerfile version to `labs` channel. This feature is available
 since `docker/dockerfile:1.3.0-labs` release.
@@ -319,7 +347,7 @@ eot
 RUN FOO=abc ash /app/script.sh
 ```
 
-## Built-in build args
+### Built-in build args
 
 * `BUILDKIT_CACHE_MOUNT_NS=<string>` set optional cache ID namespace
 * `BUILDKIT_CONTEXT_KEEP_GIT_DIR=<bool>` trigger git context to keep the `.git` directory
@@ -327,3 +355,8 @@ RUN FOO=abc ash /app/script.sh
 * `BUILDKIT_MULTI_PLATFORM=<bool>` opt into determnistic output regardless of multi-platform output or not
 * `BUILDKIT_SANDBOX_HOSTNAME=<string>` set the hostname (default `buildkitsandbox`)
 * `BUILDKIT_SYNTAX=<image>` set frontend image
+
+## Contributing
+
+Want to contribute? Awesome! You can find information about contributing
+to this project in the [CONTRIBUTING.md](/.github/CONTRIBUTING.md)
