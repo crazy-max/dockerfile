@@ -1,0 +1,72 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+      - 'v[0-9]*'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'master'
+      - 'v[0-9]*'
+
+env:
+  # FIXME: Use docker/dockerfile when merged
+  REPO_SLUG: "crazymax/dockerfile"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        channel:
+          - mainline
+          - labs
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            ${{ env.REPO_SLUG }}
+          tags: |
+            type=semver,pattern={{version}},enable=${{ matrix.channel == 'mainline' }}
+            type=semver,pattern={{version}},suffix=-${{ matrix.channel }},enable=${{ matrix.channel != 'mainline' }}
+            type=ref,event=branch,enable=${{ matrix.channel == 'mainline' }}
+            type=ref,event=branch,suffix=-${{ matrix.channel }},enable=${{ matrix.channel != 'mainline' }}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') && matrix.channel == 'mainline' }}
+            type=raw,value=latest,suffix=-${{ matrix.channel }},enable=${{ startsWith(github.ref, 'refs/tags/') && matrix.channel != 'mainline' }}
+            type=ref,event=pr
+          bake-target: meta-helper
+          flavor: |
+            latest=false
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build image
+        uses: docker/bake-action@v1
+        with:
+          files: |
+            ./docker-bake.hcl
+            ${{ steps.meta.outputs.bake-file }}
+          targets: image-cross
+          push: ${{ github.event_name != 'pull_request' }}
