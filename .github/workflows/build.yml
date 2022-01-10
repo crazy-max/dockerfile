@@ -14,7 +14,7 @@ on:
       - 'v[0-9]*'
 
 env:
-  # FIXME: Use docker/dockerfile when merged
+  # FIXME: Use docker/dockerfile when moved to docker org
   REPO_SLUG: "crazymax/dockerfile"
 
 jobs:
