@@ -2,7 +2,7 @@ package main
 
 var (
 	// Package is filled at linking time
-	Package = "github.com/moby/buildkit/frontend/dockerfile/cmd/dockerfile-frontend"
+	Package = "github.com/docker/dockerfile/cmd/dockerfile-frontend"
 
 	// Version holds the complete version number. Filled in at linking time.
 	Version = "0.0.0+unknown"

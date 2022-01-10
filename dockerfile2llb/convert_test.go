@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/docker/dockerfile/instructions"
+	"github.com/docker/dockerfile/shell"
 	"github.com/moby/buildkit/exporter/containerimage/exptypes"
-	"github.com/moby/buildkit/frontend/dockerfile/instructions"
-	"github.com/moby/buildkit/frontend/dockerfile/shell"
 	"github.com/moby/buildkit/util/appcontext"
 	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/assert"

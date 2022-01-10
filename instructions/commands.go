@@ -5,7 +5,7 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/strslice"
-	"github.com/moby/buildkit/frontend/dockerfile/parser"
+	"github.com/docker/dockerfile/parser"
 	"github.com/pkg/errors"
 )
 
