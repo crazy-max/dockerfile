@@ -37,9 +37,29 @@ jobs:
         with:
           images: |
             ${{ env.REPO_SLUG }}
+          ### dockerfile frontend versioning
+          ### on semver tag:
+          # docker/dockerfile:1.0.1
+          # docker/dockerfile:1.1
+          # docker/dockerfile:1
+          # docker/dockerfile:latest
+          # docker/dockerfile:1.0.1-labs
+          # docker/dockerfile:1.1-labs
+          # docker/dockerfile:1-labs
+          # docker/dockerfile:latest-labs
+          ### on pre-release tag:
+          # docker/dockerfile:1.1.0-rc.1
+          # docker/dockerfile:1.1.0-rc.1-labs
+          ### on push default branch (master):
+          # docker/dockerfile:master
+          # docker/dockerfile:master-labs
           tags: |
             type=semver,pattern={{version}},enable=${{ matrix.channel == 'mainline' }}
             type=semver,pattern={{version}},suffix=-${{ matrix.channel }},enable=${{ matrix.channel != 'mainline' }}
+            type=semver,pattern={{major}}.{{minor}},enable=${{ matrix.channel == 'mainline' }}
+            type=semver,pattern={{major}}.{{minor}},suffix=-${{ matrix.channel }},enable=${{ matrix.channel != 'mainline' }}
+            type=semver,pattern={{major}},enable=${{ matrix.channel == 'mainline' }}
+            type=semver,pattern={{major}},suffix=-${{ matrix.channel }},enable=${{ matrix.channel != 'mainline' }}
             type=ref,event=branch,enable=${{ matrix.channel == 'mainline' }}
             type=ref,event=branch,suffix=-${{ matrix.channel }},enable=${{ matrix.channel != 'mainline' }}
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/') && matrix.channel == 'mainline' }}
