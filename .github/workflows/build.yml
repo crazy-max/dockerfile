@@ -30,6 +30,8 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       -
         name: Install semver npm pkg
         run: npm install semver
@@ -112,3 +114,5 @@ jobs:
             ${{ steps.meta.outputs.bake-file }}
           targets: image-cross
           push: ${{ github.event_name != 'pull_request' }}
+        env:
+          CHANNEL: ${{ matrix.channel }}
