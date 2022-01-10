@@ -3,7 +3,7 @@
 
 package parser
 
-import "github.com/moby/buildkit/frontend/dockerfile/command"
+import "github.com/docker/dockerfile/command"
 
 func init() {
 	heredocDirectives = map[string]bool{

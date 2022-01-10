@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/containerd/continuity/fs/fstest"
+	"github.com/docker/dockerfile/builder"
 	"github.com/moby/buildkit/client"
-	"github.com/moby/buildkit/frontend/dockerfile/builder"
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/secrets/secretsprovider"
 	"github.com/moby/buildkit/util/testutil/integration"

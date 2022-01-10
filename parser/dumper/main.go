@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/moby/buildkit/frontend/dockerfile/parser"
+	"github.com/docker/dockerfile/parser"
 )
 
 func main() {

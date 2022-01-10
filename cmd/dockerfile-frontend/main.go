@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	dockerfile "github.com/moby/buildkit/frontend/dockerfile/builder"
+	dockerfile "github.com/docker/dockerfile/builder"
 	"github.com/moby/buildkit/frontend/gateway/grpcclient"
 	"github.com/moby/buildkit/util/appcontext"
 	"github.com/moby/buildkit/util/stack"
