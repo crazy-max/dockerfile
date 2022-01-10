@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+OUTPUT=$1
+
+. $(dirname $0)/_util
+set -eu -o pipefail
+
+outputFlag="--output=$OUTPUT"
+if [ -z "$OUTPUT" ]; then
+  outputFlag="--output=type=cacheonly"
+fi
+
+# build buildkit integration test base from buildkit ref
+# https://github.com/moby/buildkit/blob/ffe2301031c8f8bfb8d5fc5034e5e509c5624913/Dockerfile#L228
+dockerCmd buildx build $cacheFromFlag $cacheToFlag $outputFlag \
+  --target "integration-tests-base" \
+  $buildkitRef

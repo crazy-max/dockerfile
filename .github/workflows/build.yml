@@ -16,9 +16,124 @@ on:
 env:
   # FIXME: Use docker/dockerfile when moved to docker org
   REPO_SLUG: "crazymax/dockerfile"
+  CACHE_GHA_SCOPE_IT: "integration-tests"
 
 jobs:
+  base:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v1
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          buildkitd-flags: --debug
+      -
+        name: Build integration base
+        run: |
+          ./hack/buildkit-it-base
+        env:
+          CACHE_FROM: type=gha,scope=${{ env.CACHE_GHA_SCOPE_IT }}
+          CACHE_TO: type=gha,scope=${{ env.CACHE_GHA_SCOPE_IT }}
+
+  test:
+    needs:
+      - base
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg:
+          - .
+        channel:
+          - mainline
+          - labs
+        worker:
+          - containerd
+          - oci
+        type:
+          - integration
+          - dockerfile
+        include:
+          - pkg: ./...
+            skip-integration-tests: 1
+            type: integration
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v1
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          buildkitd-flags: --debug
+      -
+        name: Test
+        run: |
+          if [ -n "${{ matrix.worker }}" ]; then
+            export TEST_FLAGS="${TEST_FLAGS} --run=//worker=${{ matrix.worker }}"
+          fi
+          ./hack/test ${{ matrix.type }}
+          mv ./coverage/coverage.txt ./coverage/coverage-${{ github.job }}-$(echo "${{ matrix.channel }}-${{ matrix.skip-integration-tests }}-${{ matrix.type }}-${{ matrix.worker }}" | tr -dc '[:alnum:]-\n\r' | tr '[:upper:]' '[:lower:]').txt
+        env:
+          CACHE_FROM: type=gha,scope=${{ env.CACHE_GHA_SCOPE_IT }}
+          CHANNEL: ${{ matrix.channel }}
+          TEST_COVERAGE: 1
+          TEST_PKGS: ${{ matrix.pkg }}
+          TEST_FLAGS: -v --parallel=6 --timeout=20m
+          SKIP_INTEGRATION_TESTS: ${{ matrix.skip-integration-tests }}
+      -
+        name: Upload coverage file
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: ./coverage
+
+  upload-coverage:
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Download coverage files
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage
+          path: ./coverage
+      -
+        name: List coverage files
+        uses: actions/github-script@v3
+        id: files
+        with:
+          result-encoding: string
+          script: |
+            return require('fs').readdirSync('./coverage', {withFileTypes: true})
+              .filter(item => !item.isDirectory())
+              .map(item => `./coverage/${item.name}`)
+              .join(',');
+      -
+        name: Send to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: ${{ steps.files.outputs.result }}
+
   build:
+    needs:
+      - test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

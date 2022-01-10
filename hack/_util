@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+dockerCmd() {
+  (set -x ; docker "$@")
+}
+
+: ${CACHE_FROM=}
+: ${CACHE_TO=}
+
+buildkitPkg=github.com/moby/buildkit
+# FIXME: Doesn't seem to be possible to use a ref from a pseudo-ver in go.mod as build context so we need to use a hardcoded one for now.
+buildkitVersion=ffe2301031c8f8bfb8d5fc5034e5e509c5624913
+# Returns buildkit ref from go.mod (can be v0.9.3 or ffe2301031c8 for pseudo-ver)
+#buildkitVersion=$(go list -mod=readonly -u -m -f '{{.Version}}' $buildkitPkg)
+#if [[ "${buildkitVersion}" == *-*-* ]]; then
+#  # if a pseudo-version, figure out just the SHA
+#  buildkitVersion=$(echo "${buildkitVersion}" | awk -F"-" '{print $NF}' | awk 'BEGIN{FIELDWIDTHS="7"} {print $1}')
+#fi
+buildkitRef="https://${buildkitPkg}.git#${buildkitVersion}"
+
+cacheFromFlag=""
+cacheToFlag=""
+if [ -n "$CACHE_FROM" ]; then
+  cacheFromFlag="--cache-from=$CACHE_FROM"
+fi
+if [ -n "$CACHE_TO" ]; then
+  cacheToFlag="--cache-to=$CACHE_TO"
+fi
