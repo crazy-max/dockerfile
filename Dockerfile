@@ -14,6 +14,10 @@ ENV CGO_ENABLED=0
 ENV GOFLAGS=-mod=vendor
 WORKDIR /src
 
+FROM base AS dev
+WORKDIR /src
+COPY . .
+
 FROM base AS version
 ARG CHANNEL
 RUN --mount=target=. <<EOT
