@@ -7,7 +7,7 @@ variable "CHANNEL" {
 
 // Special target: https://github.com/docker/metadata-action#bake-definition
 target "meta-helper" {
-  tags = ["docker/dockerfile:local"]
+  tags = ["dockerfile:local"]
 }
 
 target "_common" {

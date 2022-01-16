@@ -16,6 +16,7 @@ ___
 
 - [Note for Docker users](#note-for-docker-users)
 - [Using external Dockerfile frontend](#using-external-dockerfile-frontend)
+- [Build](#build)
 - [Examples](#examples)
 - [Syntax](#syntax)
   - [Build Mounts `RUN --mount=...`](#build-mounts-run---mount)
@@ -57,6 +58,22 @@ The images are published on two channels: *latest* and *labs*. The latest channe
 [incrementing number](https://github.com/moby/buildkit/issues/528). This means the labs channel may remove a feature without
 incrementing the major component of a version and you may want to pin the image to a specific revision. Even when syntaxes
 change in between releases on labs channel, the old versions are guaranteed to be backward compatible.
+
+## Build
+
+```shell
+# build image and output to docker with dockerfile:local tag (default)
+docker buildx bake
+
+# build multi-platform image
+docker buildx bake image-cross
+
+# build labs channel
+CHANNEL=labs docker buildx bake
+
+# build and push to username/dockerfile:test
+docker buildx bake image --push --set *.tags=username/dockerfile:test
+```
 
 ## Examples
 
