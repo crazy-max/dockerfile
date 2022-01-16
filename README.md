@@ -16,6 +16,7 @@ ___
 
 - [Note for Docker users](#note-for-docker-users)
 - [Using external Dockerfile frontend](#using-external-dockerfile-frontend)
+- [Examples](#examples)
 - [Syntax](#syntax)
   - [Build Mounts `RUN --mount=...`](#build-mounts-run---mount)
     - [`RUN --mount=type=bind` (the default mount type)](#run---mounttypebind-the-default-mount-type)
@@ -56,6 +57,16 @@ The images are published on two channels: *latest* and *labs*. The latest channe
 [incrementing number](https://github.com/moby/buildkit/issues/528). This means the labs channel may remove a feature without
 incrementing the major component of a version and you may want to pin the image to a specific revision. Even when syntaxes
 change in between releases on labs channel, the old versions are guaranteed to be backward compatible.
+
+## Examples
+
+### CLI examples
+
+* [`build-using-dockerfile`](./examples/build-using-dockerfile): a BuildKit client with `docker build`-style CLI
+
+### LLB examples
+
+* [`dockerfile2llb`](./examples/dockerfile2llb): convert a Dockerfile to LLB for debugging purposes
 
 ## Syntax
 
