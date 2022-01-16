@@ -43,3 +43,13 @@ target "image-cross" {
     "linux/s390x"
   ]
 }
+
+group "validate" {
+  targets = ["lint"]
+}
+
+target "lint" {
+  inherits = ["_common"]
+  dockerfile = "./hack/dockerfiles/lint.Dockerfile"
+  output = ["type=cacheonly"]
+}
