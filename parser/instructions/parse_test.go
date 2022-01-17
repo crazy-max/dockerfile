@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/dockerfile/command"
 	"github.com/docker/dockerfile/parser"
+	"github.com/docker/dockerfile/parser/command"
 	"github.com/stretchr/testify/require"
 )
 

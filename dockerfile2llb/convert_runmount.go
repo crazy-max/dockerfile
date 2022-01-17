@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/docker/dockerfile/instructions"
+	"github.com/docker/dockerfile/parser/instructions"
 	"github.com/moby/buildkit/client/llb"
 	"github.com/moby/buildkit/solver/pb"
 	"github.com/pkg/errors"

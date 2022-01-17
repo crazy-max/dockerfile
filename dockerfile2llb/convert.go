@@ -16,9 +16,9 @@ import (
 
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/distribution/reference"
-	"github.com/docker/dockerfile/instructions"
 	"github.com/docker/dockerfile/parser"
-	"github.com/docker/dockerfile/shell"
+	"github.com/docker/dockerfile/parser/instructions"
+	"github.com/docker/dockerfile/parser/shell"
 	"github.com/docker/go-connections/nat"
 	"github.com/moby/buildkit/client/llb"
 	"github.com/moby/buildkit/client/llb/imagemetaresolver"

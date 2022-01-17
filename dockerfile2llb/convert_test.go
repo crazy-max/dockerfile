@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/dockerfile/instructions"
-	"github.com/docker/dockerfile/shell"
+	"github.com/docker/dockerfile/parser/instructions"
+	"github.com/docker/dockerfile/parser/shell"
 	"github.com/moby/buildkit/exporter/containerimage/exptypes"
 	"github.com/moby/buildkit/util/appcontext"
 	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"

@@ -3,7 +3,7 @@
 
 package parser
 
-import "github.com/docker/dockerfile/command"
+import "github.com/docker/dockerfile/parser/command"
 
 func init() {
 	heredocDirectives = map[string]bool{

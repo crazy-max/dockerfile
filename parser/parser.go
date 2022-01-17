@@ -11,8 +11,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/docker/dockerfile/command"
-	"github.com/docker/dockerfile/shell"
+	"github.com/docker/dockerfile/parser/command"
+	"github.com/docker/dockerfile/parser/shell"
 	"github.com/pkg/errors"
 )
 
