@@ -44,6 +44,25 @@ target "image-cross" {
   ]
 }
 
+target "vendor" {
+  inherits = ["_common"]
+  dockerfile = "./hack/dockerfiles/vendor.Dockerfile"
+  target = "update"
+  output = ["."]
+}
+
+target "mod-outdated" {
+  inherits = ["_common"]
+  dockerfile = "./hack/dockerfiles/vendor.Dockerfile"
+  target = "outdated"
+  args = {
+    // used to invalidate cache for outdated run stage
+    // can be dropped when https://github.com/moby/buildkit/issues/1213 fixed
+    _RANDOM = uuidv4()
+  }
+  output = ["type=cacheonly"]
+}
+
 group "validate" {
   targets = ["lint"]
 }
@@ -51,5 +70,12 @@ group "validate" {
 target "lint" {
   inherits = ["_common"]
   dockerfile = "./hack/dockerfiles/lint.Dockerfile"
+  output = ["type=cacheonly"]
+}
+
+target "validate-vendor" {
+  inherits = ["_common"]
+  dockerfile = "./hack/dockerfiles/vendor.Dockerfile"
+  target = "validate"
   output = ["type=cacheonly"]
 }
