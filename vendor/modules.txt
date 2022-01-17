@@ -160,6 +160,13 @@ github.com/docker/docker/testutil/daemon
 github.com/docker/docker/testutil/environment
 github.com/docker/docker/testutil/fixtures/load
 github.com/docker/docker/testutil/request
+# github.com/docker/dockerfile/parser v0.0.0-00010101000000-000000000000 => ./parser
+## explicit; go 1.17
+github.com/docker/dockerfile/parser
+github.com/docker/dockerfile/parser/command
+github.com/docker/dockerfile/parser/dockerignore
+github.com/docker/dockerfile/parser/instructions
+github.com/docker/dockerfile/parser/shell
 # github.com/docker/go-connections v0.4.0
 ## explicit
 github.com/docker/go-connections/nat
@@ -531,6 +538,7 @@ gotest.tools/v3/internal/format
 gotest.tools/v3/internal/source
 gotest.tools/v3/poll
 # github.com/docker/docker => github.com/docker/docker v20.10.3-0.20211208011758-87521affb077+incompatible
+# github.com/docker/dockerfile/parser => ./parser
 # github.com/moby/buildkit => github.com/moby/buildkit v0.9.1-0.20220107201744-ffe2301031c8
 # go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace => github.com/tonistiigi/opentelemetry-go-contrib/instrumentation/net/http/httptrace/otelhttptrace v0.0.0-20211026174723-2f82a1e0c997
 # go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp => github.com/tonistiigi/opentelemetry-go-contrib/instrumentation/net/http/otelhttp v0.0.0-20211026174723-2f82a1e0c997

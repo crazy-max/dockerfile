@@ -6,7 +6,7 @@ package dockerfile2llb
 import (
 	"github.com/pkg/errors"
 
-	"github.com/docker/dockerfile/instructions"
+	"github.com/docker/dockerfile/parser/instructions"
 	"github.com/moby/buildkit/client/llb"
 	"github.com/moby/buildkit/solver/pb"
 )

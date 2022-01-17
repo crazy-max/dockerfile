@@ -6,10 +6,10 @@ require (
 	github.com/containerd/containerd v1.6.0-beta.3
 	github.com/containerd/continuity v0.2.1
 	github.com/docker/distribution v2.7.1+incompatible
-	github.com/docker/docker v20.10.12+incompatible // master
+	github.com/docker/docker v20.10.12+incompatible // master (v21.xx-dev)
+	github.com/docker/dockerfile/parser v0.0.0-00010101000000-000000000000
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.4.0
-	github.com/google/go-cmp v0.5.6
 	github.com/moby/buildkit v0.9.3
 	github.com/moby/sys/signal v0.6.0
 	github.com/opencontainers/image-spec v1.0.2-0.20210819154149-5ad6f50d6283
@@ -37,6 +37,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
@@ -75,6 +76,7 @@ require (
 
 replace (
 	github.com/docker/docker => github.com/docker/docker v20.10.3-0.20211208011758-87521affb077+incompatible
+	github.com/docker/dockerfile/parser => ./parser
 	github.com/moby/buildkit => github.com/moby/buildkit v0.9.1-0.20220107201744-ffe2301031c8
 	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace => github.com/tonistiigi/opentelemetry-go-contrib/instrumentation/net/http/httptrace/otelhttptrace v0.0.0-20211026174723-2f82a1e0c997
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp => github.com/tonistiigi/opentelemetry-go-contrib/instrumentation/net/http/otelhttp v0.0.0-20211026174723-2f82a1e0c997

@@ -1,0 +1,39 @@
+name: parser
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+      - 'v[0-9]*'
+    tags:
+      - 'parser/v*'
+  pull_request:
+    branches:
+      - 'master'
+      - 'v[0-9]*'
+
+env:
+  WORKDIR: ./parser
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Test
+        uses: docker/bake-action@v1
+        with:
+          files: ${{ env.WORKDIR }}/docker-bake.hcl
+          targets: test
+          set: |
+            *.context=${{ env.WORKDIR }}
+            *.output=${{ env.WORKDIR }}/coverage
+      -
+        name: Send to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          directory: ${{ env.WORKDIR }}/coverage

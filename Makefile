@@ -23,7 +23,7 @@ vendor:
 mod-outdated:
 	$(BUILDX_CMD) bake mod-outdated
 
-validate: lint test validate-vendor
+validate: lint test test-parser validate-vendor
 
 lint:
 	$(BUILDX_CMD) bake lint
@@ -34,4 +34,11 @@ test:
 validate-vendor:
 	$(BUILDX_CMD) bake validate-vendor
 
-.PHONY: image vendor mod-outdated validate lint test validate-vendor
+test-parser:
+	$(BUILDX_CMD) bake \
+		--file ./parser/docker-bake.hcl \
+		--set *.context=./parser \
+		--set *.output=./parser/coverage \
+		test
+
+.PHONY: image vendor mod-outdated validate lint test validate-vendor test-parser

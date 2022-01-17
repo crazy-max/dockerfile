@@ -1,0 +1,6 @@
+comment: false
+github_checks:
+  annotations: false
+
+fixes:
+  - "vendor/github.com/docker/dockerfile::" # move path to its original location

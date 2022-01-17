@@ -10,8 +10,8 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/strslice"
-	"github.com/docker/dockerfile/command"
 	"github.com/docker/dockerfile/parser"
+	"github.com/docker/dockerfile/parser/command"
 	"github.com/moby/buildkit/util/suggest"
 	"github.com/pkg/errors"
 )
