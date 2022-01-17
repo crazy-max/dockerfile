@@ -1,8 +1,9 @@
 # BuildKit Dockerfile frontend
 
 <!-- FIXME: Remove comment when moved to docker org
+[![PkgGoDev](https://img.shields.io/badge/go.dev-docs-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/docker/dockerfile)
 [![GitHub release](https://img.shields.io/github/release/docker/dockerfile.svg?style=flat-square)](https://github.com/docker/dockerfile/releases/latest)
-[![Build Status](https://github.com/docker/dockerfile/workflows/build/badge.svg)](https://github.com/docker/dockerfile/actions?query=workflow%3Abuild)
+[![Build Status](https://img.shields.io/github/workflow/status/docker/dockerfile/build?label=build&logo=github&style=flat-square)](https://github.com/docker/dockerfile/actions?query=workflow%3Abuild)
 [![Docker Stars](https://img.shields.io/docker/stars/docker/dockerfile.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/docker/dockerfile/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/docker/dockerfile.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/docker/dockerfile/)
 

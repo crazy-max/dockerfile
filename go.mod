@@ -6,7 +6,7 @@ require (
 	github.com/containerd/containerd v1.6.0-beta.3
 	github.com/containerd/continuity v0.2.1
 	github.com/docker/distribution v2.7.1+incompatible
-	github.com/docker/docker v20.10.12+incompatible // master
+	github.com/docker/docker v20.10.12+incompatible // master (v21.xx-dev)
 	github.com/docker/dockerfile/parser v0.0.0-00010101000000-000000000000
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.4.0

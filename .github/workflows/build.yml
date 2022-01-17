@@ -109,27 +109,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
         name: Download coverage files
         uses: actions/download-artifact@v2
         with:
           name: coverage
           path: ./coverage
       -
-        name: List coverage files
-        uses: actions/github-script@v3
-        id: files
-        with:
-          result-encoding: string
-          script: |
-            return require('fs').readdirSync('./coverage', {withFileTypes: true})
-              .filter(item => !item.isDirectory())
-              .map(item => `./coverage/${item.name}`)
-              .join(',');
-      -
         name: Send to Codecov
         uses: codecov/codecov-action@v2
         with:
-          files: ${{ steps.files.outputs.result }}
+          directory: ./coverage
 
   build:
     needs:
