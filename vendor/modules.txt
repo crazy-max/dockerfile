@@ -128,7 +128,7 @@ github.com/davecgh/go-spew/spew
 github.com/docker/distribution/digestset
 github.com/docker/distribution/reference
 github.com/docker/distribution/registry/api/errcode
-# github.com/docker/docker v20.10.7+incompatible => github.com/docker/docker v20.10.3-0.20211208011758-87521affb077+incompatible
+# github.com/docker/docker v20.10.12+incompatible => github.com/docker/docker v20.10.3-0.20211208011758-87521affb077+incompatible
 ## explicit
 github.com/docker/docker/api
 github.com/docker/docker/api/types
@@ -211,6 +211,8 @@ github.com/google/shlex
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid
+# github.com/gorilla/mux v1.8.0
+## explicit; go 1.12
 # github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 ## explicit; go 1.14
 github.com/grpc-ecosystem/go-grpc-middleware
@@ -227,7 +229,7 @@ github.com/klauspost/compress/huff0
 github.com/klauspost/compress/internal/snapref
 github.com/klauspost/compress/zstd
 github.com/klauspost/compress/zstd/internal/xxhash
-# github.com/moby/buildkit v0.9.1-0.20220107201744-ffe2301031c8
+# github.com/moby/buildkit v0.9.3 => github.com/moby/buildkit v0.9.1-0.20220107201744-ffe2301031c8
 ## explicit; go 1.17
 github.com/moby/buildkit/api/services/control
 github.com/moby/buildkit/api/types
@@ -529,5 +531,6 @@ gotest.tools/v3/internal/format
 gotest.tools/v3/internal/source
 gotest.tools/v3/poll
 # github.com/docker/docker => github.com/docker/docker v20.10.3-0.20211208011758-87521affb077+incompatible
+# github.com/moby/buildkit => github.com/moby/buildkit v0.9.1-0.20220107201744-ffe2301031c8
 # go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace => github.com/tonistiigi/opentelemetry-go-contrib/instrumentation/net/http/httptrace/otelhttptrace v0.0.0-20211026174723-2f82a1e0c997
 # go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp => github.com/tonistiigi/opentelemetry-go-contrib/instrumentation/net/http/otelhttp v0.0.0-20211026174723-2f82a1e0c997

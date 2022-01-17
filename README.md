@@ -61,18 +61,26 @@ change in between releases on labs channel, the old versions are guaranteed to b
 
 ## Build
 
+`docker/dockerfile` is developed using Docker.
+
 ```shell
-# build image and output to docker with dockerfile:local tag (default)
-docker buildx bake
+# build mainline channel image (output to docker)
+make image
 
-# build multi-platform image
-docker buildx bake image-cross
+# build mainline channel image (output to docker)
+CHANNEL=labs make image
 
-# build labs channel
-CHANNEL=labs docker buildx bake
+# vendor
+make vendor
 
-# build and push to username/dockerfile:test
-docker buildx bake image --push --set *.tags=username/dockerfile:test
+# validate
+make validate
+
+# check dependencies updates
+make mod-outdated
+
+# build and push multi-platform mainline channel image to username/dockerfile:test
+docker buildx bake image-cross --push --set *.tags=username/dockerfile:test
 ```
 
 ## Examples
