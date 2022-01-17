@@ -14,4 +14,4 @@ fi
 # https://github.com/moby/buildkit/blob/ffe2301031c8f8bfb8d5fc5034e5e509c5624913/Dockerfile#L228
 dockerCmd buildx build $cacheFromFlag $cacheToFlag $outputFlag \
   --target "integration-tests-base" \
-  "$buildkitRef"
+  "$BUILDKIT_REF"
