@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-: "${BUILDKIT_VERSION=}"
 : "${CACHE_FROM=}"
 : "${CACHE_TO=}"
-
-set -e
+: "${BUILDKIT_REF=}"
 
 dockerCmd() {
   (set -x ; docker "$@")
@@ -19,15 +17,23 @@ if [ -n "$CACHE_TO" ]; then
   cacheToFlag="--cache-to=$CACHE_TO"
 fi
 
-if [ -z "$BUILDKIT_VERSION" ]; then
-  # resolve BuildKit version from go.mod if not provided
-  BUILDKIT_VERSION=$(go list -mod=mod -u -m -f '{{.Version}}' github.com/moby/buildkit)
-  if [[ "${BUILDKIT_VERSION}" == *-*-* ]]; then
-    # if pseudo-version, figure out just the uncommon sha (https://github.com/golang/go/issues/34745)
-    BUILDKIT_VERSION=$(echo "${BUILDKIT_VERSION}" | awk -F"-" '{print $NF}' | awk 'BEGIN{FIELDWIDTHS="7"} {print $1}')
-    # use github api to return full sha to be able to use it as ref for git remote context
-    BUILDKIT_VERSION=$(curl -s "https://api.github.com/repos/moby/buildkit/commits/${BUILDKIT_VERSION}" | jq -r .sha)
+if [ -z "$BUILDKIT_REF" ]; then
+  buildkitRepo=moby/buildkit
+  buildkitReplace=$(go list -mod=mod -u -m -f '{{.Replace.Path}}' "github.com/${buildkitRepo}" 2>/dev/null)
+  if [ -n "$buildkitReplace" ]; then
+    # replace found, get buildkit version from it instead
+    buildkitVersion=$(go list -mod=mod -u -m -f '{{.Replace.Version}}' "github.com/${buildkitRepo}")
+    # also set the right repo from replace
+    buildkitRepo=${buildkitReplace//github.com\//}
+  else
+    # get buildkit version from go.mod
+    buildkitVersion=$(go list -mod=mod -u -m -f '{{.Version}}' "github.com/${buildkitRepo}")
   fi
+  if [[ "${buildkitVersion}" == *-*-* ]]; then
+    # if pseudo-version, figure out just the uncommon sha (https://github.com/golang/go/issues/34745)
+    buildkitVersion=$(echo "${buildkitVersion}" | awk -F"-" '{print $NF}' | awk 'BEGIN{FIELDWIDTHS="7"} {print $1}')
+    # use github api to return full sha to be able to use it as ref for git remote context
+    buildkitVersion=$(curl -s "https://api.github.com/repos/${buildkitRepo}/commits/${buildkitVersion}" | jq -r .sha)
+  fi
+  BUILDKIT_REF="https://github.com/${buildkitRepo}.git#${buildkitVersion}"
 fi
-
-buildkitRef="https://github.com/moby/buildkit.git#${BUILDKIT_VERSION}"
