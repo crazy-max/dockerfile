@@ -7,7 +7,7 @@ require (
 	github.com/containerd/continuity v0.2.1
 	github.com/docker/distribution v2.7.1+incompatible
 	github.com/docker/docker v20.10.12+incompatible // master (v21.xx-dev)
-	github.com/docker/dockerfile/parser v0.0.0-00010101000000-000000000000
+	github.com/docker/dockerfile/parser v0.0.0-20220117183717-801e43c8772c
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.4.0
 	github.com/moby/buildkit v0.9.3
@@ -69,7 +69,6 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 )
@@ -77,7 +76,8 @@ require (
 replace (
 	github.com/docker/docker => github.com/docker/docker v20.10.3-0.20211208011758-87521affb077+incompatible
 	github.com/docker/dockerfile/parser => ./parser
-	github.com/moby/buildkit => github.com/moby/buildkit v0.9.1-0.20220107201744-ffe2301031c8
+	// FIXME: Use github.com/moby/buildkit
+	github.com/moby/buildkit => github.com/crazy-max/buildkit-nofrontend v0.0.0-20220117003734-6471f316d3e6
 	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace => github.com/tonistiigi/opentelemetry-go-contrib/instrumentation/net/http/httptrace/otelhttptrace v0.0.0-20211026174723-2f82a1e0c997
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp => github.com/tonistiigi/opentelemetry-go-contrib/instrumentation/net/http/otelhttp v0.0.0-20211026174723-2f82a1e0c997
 )
